@@ -333,7 +333,7 @@ if __name__ == '__main__':
         result_dict[i].append(
             {
                 'camera': 1,
-                'state': r1_state,
+                'state': 1 if r1_state is not None else 0,
                 'speak_prop': r1_speak_prop
             }
         )
@@ -342,7 +342,7 @@ if __name__ == '__main__':
         result_dict[i].append(
             {
                 'camera': 2,
-                'state': r2_state,
+                'state':  1 if r2_state is not None else 0,
                 'speak_prop': r2_speak_prop
             }
         )

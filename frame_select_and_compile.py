@@ -60,8 +60,8 @@ if __name__ == '__main__':
         camera1_info = frame_info[0]
         camera2_info = frame_info[1]
 
-        camera1_prop = camera1_info['speak_prop'][-1]
-        camera2_prop = camera2_info['speak_prop'][-1]
+        camera1_prop = camera1_info['speak_prop']
+        camera2_prop = camera2_info['speak_prop']
 
         # 알고리즘 생각하고 수정 -> 0번, 1번, 2번 카메라 중에서 선택
         if camera1_prop > 0.65 and camera2_prop > 0.65: # 두 출연자 모두 말하는 확률이 높은 경우
@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
     time.sleep(3)
     output_video_with_audio = VideoFileClip(tmp_path)
-    audio = audio.subclip(start_time, end_time)
+    audio = audio.subclip(t_start = start_time, t_end = end_time)
     output_video_with_audio = output_video_with_audio.set_audio(audio)
     output_video_with_audio.write_videofile(args.output_video_path, codec='libx264', audio_codec='aac')
     os.remove(tmp_path)

@@ -2,3 +2,5 @@ checkpoints/
 train_materials/
 __pycache__/
 compiled_sample/
+*.mp4
+*.json
