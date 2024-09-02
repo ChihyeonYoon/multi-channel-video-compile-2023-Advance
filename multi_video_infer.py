@@ -6,10 +6,11 @@ import multiprocessing as mp
 import time
 import mediapipe
 import traceback
-import  random
+import random
 import torch
 from PIL import Image
 from argparse import ArgumentParser
+import json
 
 
 from model_zoo import get_model
@@ -271,12 +272,15 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--video1', type=str, default='/home2/multicam/dataset/ETRI/202309/230725_opentalk/clipped/camera3_synced.mp4')
     parser.add_argument('--video2', type=str, default='/home2/multicam/dataset/ETRI/202309/230725_opentalk/clipped/camera2_synced.mp4')
-    parser.add_argument('--classificaion_model', type=str, default='swin_v2_b')
+    parser.add_argument('--classification_model', type=str, default='swin_v2_b')
     parser.add_argument('--weights', type=str, default='/home2/multicam/2024_Multicam/checkpoints/run0621_0339/snapshot_swin_v2_b_2_0.9563032640482664.pth')
+    parser.add_argument('--output', type=str, default='result.json')
     args = parser.parse_args()
 
-    video_path1 = '/home2/multicam/dataset/ETRI/202309/230725_opentalk/clipped/camera2_synced.mp4'
-    video_path2 = '/home2/multicam/dataset/ETRI/202309/230725_opentalk/clipped/camera3_synced.mp4'
+    # video_path1 = '/home2/multicam/dataset/ETRI/202309/230725_opentalk/clipped/camera2_synced.mp4'
+    # video_path2 = '/home2/multicam/dataset/ETRI/202309/230725_opentalk/clipped/camera3_synced.mp4'
+    video_path1 = args.video1
+    video_path2 = args.video2
 
     cap = cv2.VideoCapture(video_path1)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -297,8 +301,8 @@ if __name__ == '__main__':
     prd_p2.start()
     print("Producer started")
 
-    csm_p1 = mp.Process(target=infer_lip_state, args=(early_q1, result_list1, args.classificaion_model, args.weights))
-    csm_p2 = mp.Process(target=infer_lip_state, args=(early_q2, result_list2, args.classificaion_model, args.weights))
+    csm_p1 = mp.Process(target=infer_lip_state, args=(early_q1, result_list1, args.classification_model, args.weights))
+    csm_p2 = mp.Process(target=infer_lip_state, args=(early_q2, result_list2, args.classification_model, args.weights))
     csm_p1.start()
     csm_p2.start()
     print("Consumer started")
@@ -326,7 +330,7 @@ if __name__ == '__main__':
         r2_state, r2_speak_prop = r2
 
         # if r1_state is not None and r1_prop is not None:
-        result_dict[i+1].append(
+        result_dict[i].append(
             {
                 'camera': 1,
                 'state': r1_state,
@@ -335,7 +339,7 @@ if __name__ == '__main__':
         )
         
         # if r2_state is not None and r2_prop is not None:
-        result_dict[i+1].append(
+        result_dict[i].append(
             {
                 'camera': 2,
                 'state': r2_state,
@@ -343,7 +347,7 @@ if __name__ == '__main__':
             }
         )
 
-    with open('result.json', 'w') as f:
+    with open(args.output, 'w') as f:
         json.dump(result_dict, f, indent=4)
     
     print(f"Elapsed time: {time.time()-start:.4f} sec")
