@@ -1,0 +1,6 @@
+98번 0621 14:00
+# CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python DP_main.py --model_name swin_v2_b --batch_size 512 --workers 16 --epochs 10 --lr 1e-4
+# tensorboard --logdir=/home2/multicam/2024_Multicam/checkpoints/run0621_0339/tensorboard --port 8800 --bind_all
+
+98번 0625 20:00
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5 python DP_main.py --model_name efficientnet_v2_s --batch_size 512 --workers 16 --epochs 10 --lr 1e-4
